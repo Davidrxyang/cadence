@@ -46,7 +46,8 @@ def modify_json(file_path, updates):
 
 def run_mirage():
     def run_for_dataset(config_file, logic_config_file, dataset_name):
-        run_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        # run_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        run_values = [1]
         for buffer_size in buffer_size_values:
             for p in p_values:
                 for k in k_values:
