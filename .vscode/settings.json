@@ -27,6 +27,12 @@
             "database": "marathondev",
             "username": "marathon",
             "askForPassword": true
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "japan",
+            "database": "db/japan.db"
         }
     ],
     "go.testTimeout": "300s"
