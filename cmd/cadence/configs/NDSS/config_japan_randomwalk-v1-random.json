@@ -14,7 +14,7 @@
         "start_time": 1704067200,
         "end_time": 1710545400,
         "dataset_name": "japan",
-        "experiment_name": "japan - randomwalk-v1-random p_t=0.5 p_d=0.8 buffer=500 run=10",
+        "experiment_name": "japan - randomwalk-v1-random p_t=0.5 p_d=0.8 buffer=500 run=1",
         "conditions_file": "cmd/cadence/conditions_japan.json",
         "logic": "randomwalk-v1",
         "logic_file": "pkg/logic/logic_configs/NDSS/logic_config_japan_randomwalk-v1-random.json",

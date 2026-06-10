@@ -78,8 +78,8 @@ def run_mirage():
                         run_command(command)
 
     datasets = [
-        ("cmd/cadence/configs/NDSS/config_japan_mirage.json", "pkg/logic/logic_configs/NDSS/logic_config_japan_mirage.json", "japan"),
-        ("cmd/cadence/configs/NDSS/config_tdrive_mirage.json", "pkg/logic/logic_configs/NDSS/logic_config_tdrive_mirage.json", "tdrive")
+        ("cmd/cadence/configs/NDSS/config_japan_mirage.json", "pkg/logic/logic_configs/NDSS/logic_config_japan_mirage.json", "japan")
+        #("cmd/cadence/configs/NDSS/config_tdrive_mirage.json", "pkg/logic/logic_configs/NDSS/logic_config_tdrive_mirage.json", "tdrive")
     ]
 
     with ThreadPoolExecutor() as executor:
@@ -90,7 +90,8 @@ def run_mirage():
 
 def run_ppbr():
     def run_for_dataset(config_file, dataset_name):
-        run_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        # run_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        run_values = [1]        
         for buffer_size in buffer_size_values:
             for run in run_values:
                 experiment_name = f"{dataset_name} - ppbr buffer={buffer_size} run={run}"
@@ -109,8 +110,8 @@ def run_ppbr():
                 run_command(command)
 
     datasets = [
-        ("cmd/cadence/configs/NDSS/config_japan_ppbr.json", "japan"),
-        ("cmd/cadence/configs/NDSS/config_tdrive_ppbr.json", "tdrive")
+        ("cmd/cadence/configs/NDSS/config_japan_ppbr.json", "japan")
+        #("cmd/cadence/configs/NDSS/config_tdrive_ppbr.json", "tdrive")
     ]
 
     with ThreadPoolExecutor() as executor:
@@ -121,7 +122,8 @@ def run_ppbr():
 
 def run_probabilistic_flooding():
     def run_for_dataset(config_file, dataset_name):
-        run_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        # run_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        run_values = [1]        
         for buffer_size in buffer_size_values:
             for run in run_values:
                 experiment_name = f"{dataset_name} - randomwalk-v1-random p_t=0.5 p_d=0.8 buffer={buffer_size} run={run}"
@@ -140,8 +142,8 @@ def run_probabilistic_flooding():
                 run_command(command)
 
     datasets = [
-        ("cmd/cadence/configs/NDSS/config_japan_randomwalk-v1-random.json", "japan"),
-        ("cmd/cadence/configs/NDSS/config_tdrive_randomwalk-v1-random.json", "tdrive")
+        ("cmd/cadence/configs/NDSS/config_japan_randomwalk-v1-random.json", "japan")
+        #("cmd/cadence/configs/NDSS/config_tdrive_randomwalk-v1-random.json", "tdrive")
     ]
 
     with ThreadPoolExecutor() as executor:
@@ -152,7 +154,8 @@ def run_probabilistic_flooding():
 
 def run_handoff():
     def run_for_dataset(config_file, dataset_name):
-        run_values = [1]
+        # run_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        run_values = [1]        
         for buffer_size in buffer_size_values:
             for run in run_values:
                 experiment_name = f"{dataset_name} - randomwalk-v1 buffer={buffer_size} run={run}"
@@ -171,8 +174,8 @@ def run_handoff():
                 run_command(command)
 
     datasets = [
-        ("cmd/cadence/configs/NDSS/config_japan_randomwalk-v1.json", "japan"),
-        ("cmd/cadence/configs/NDSS/config_tdrive_randomwalk-v1.json", "tdrive")
+        ("cmd/cadence/configs/NDSS/config_japan_randomwalk-v1.json", "japan")
+        #("cmd/cadence/configs/NDSS/config_tdrive_randomwalk-v1.json", "tdrive")
     ]
 
     with ThreadPoolExecutor() as executor:
@@ -202,8 +205,8 @@ def run_max_flooding():
                 run_command(command)
 
     datasets = [
-        ("cmd/cadence/configs/NDSS/config_japan_broadcast.json", "japan"),
-        ("cmd/cadence/configs/NDSS/config_tdrive_broadcast.json", "tdrive")
+        ("cmd/cadence/configs/NDSS/config_japan_broadcast.json", "japan")
+        # ("cmd/cadence/configs/NDSS/config_tdrive_broadcast.json", "tdrive")
     ]
 
     with ThreadPoolExecutor() as executor:
@@ -215,8 +218,8 @@ def run_max_flooding():
 def export_data():
     command = "sqlite3 -header -csv db/japan.db 'SELECT * FROM results_dbs' > results/raw-data/japan.csv"
     run_command(command)
-    command = "sqlite3 -header -csv db/tdrive.db 'SELECT * FROM results_dbs' > results/raw-data/tdrive.csv"
-    run_command(command)
+    #command = "sqlite3 -header -csv db/tdrive.db 'SELECT * FROM results_dbs' > results/raw-data/tdrive.csv"
+    #run_command(command)
 
 
 

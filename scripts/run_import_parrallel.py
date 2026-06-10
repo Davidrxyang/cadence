@@ -13,8 +13,8 @@ def run_command(command):
 def main():
     # Define the commands to execute
     commands = [
-        "./cmd/cadence/cadence import cmd/cadence/configs/NDSS/config_japan_mirage.json",
-        "./cmd/cadence/cadence import cmd/cadence/configs/NDSS/config_tdrive_mirage.json"
+        "./cmd/cadence/cadence import cmd/cadence/configs/NDSS/config_japan_mirage.json"
+        #"./cmd/cadence/cadence import cmd/cadence/configs/NDSS/config_tdrive_mirage.json"
     ]
 
     # Run the commands in parallel
