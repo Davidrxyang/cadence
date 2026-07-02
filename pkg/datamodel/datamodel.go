@@ -222,6 +222,25 @@ type DeliveredMessageDB struct {
 	Size float32
 }
 
+// a message drop event, for DB purposes - one row is recorded for every
+// message evicted from a node's buffer due to buffer overload
+type MessageDropDB struct {
+	//experiment name
+	ExperimentName string
+	// the unique, unchanging ID of the message that was dropped
+	MessageId string
+	// the original sender/owner of the dropped message
+	Owner int
+	// the node whose buffer overflowed and evicted the message
+	NodeId int
+	// the time the dropped message was originally created
+	CreationTime float64
+	// the simulation time at which the message was evicted
+	DropTime float64
+	// size of the dropped message
+	Size float32
+}
+
 // an `Encounter` is two nodes in close proximity
 type Encounter struct {
 	DatasetName    string  `gorm:"primaryKey,priority:5;index:expname,priority:2;index:n1,priority:2;index:n2,priority:2;index:datasetdistance,priority:1"`
@@ -737,6 +756,7 @@ func Init(mainLogger *logger.Logger, config *Config) {
 		&NodeList{},
 		&MessageDB{},
 		&DeliveredMessageDB{},
+		&MessageDropDB{},
 		&BufferMax{},
 		&ResultsDB{},
 		&EpochLoad{},

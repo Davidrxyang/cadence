@@ -28,6 +28,7 @@ var lockMessage map[string]*sync.Mutex
 
 var receivedmessageDBChan chan *model.DeliveredMessageDB
 var messageDBChan chan *model.MessageDB
+var messageDropDBChan chan *model.MessageDropDB
 
 // defines the interface for Node Logic
 type Logic interface {
@@ -202,9 +203,10 @@ func PlotData(rows *sql.Rows) {
 }
 
 // assign the channles from the simulate function
-func AssignChannels(messageDBChan_ chan *model.MessageDB, messagedeliveredDBChan_ chan *model.DeliveredMessageDB) {
+func AssignChannels(messageDBChan_ chan *model.MessageDB, messagedeliveredDBChan_ chan *model.DeliveredMessageDB, messageDropDBChan_ chan *model.MessageDropDB) {
 	messageDBChan = messageDBChan_
 	receivedmessageDBChan = messagedeliveredDBChan_
+	messageDropDBChan = messageDropDBChan_
 }
 
 //this function places the message in the sync.map of recepient

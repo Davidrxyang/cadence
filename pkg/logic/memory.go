@@ -138,8 +138,15 @@ func UpdateSimpleBuffer(config *model.Config, nodeid model.NodeId, message *Mess
 	nodemem_serialized := nodemem.(*SimpleBuffer)
 	//check if the situation is bounded or not
 	//loop until solution is found
+	// approximate "now" as the message's most recent hop time, falling back
+	// to its creation time if it hasn't been transferred yet (i.e. it's
+	// being originated at this node)
+	currentTime := message.CreationTime
+	if len(message.path) > 0 {
+		currentTime = message.path[len(message.path)-1].time
+	}
 	for !Storage.Organizer.CheckMemory(nodeid, size) {
-		Storage.Organizer.MakeRoom(nodeid)
+		Storage.Organizer.MakeRoom(nodeid, config.Simulation.ExperimentName, currentTime)
 		didDrop = true
 	}
 	nodemem_serialized.BufferUsage += size

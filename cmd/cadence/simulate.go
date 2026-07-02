@@ -27,6 +27,7 @@ var encounterChan chan *model.Encounter
 var bandChan chan *model.Bandwidths
 var messageDBChan chan *model.MessageDB
 var receivedmessageDBChan chan *model.DeliveredMessageDB
+var messageDropDBChan chan *model.MessageDropDB
 
 // mutex to serialize DB attempts to find start,end times for nodes
 var nodeTimeMutex sync.Mutex
@@ -425,17 +426,19 @@ func simulate(config *model.Config, investName string) {
 	encounterChan = make(chan *model.Encounter, 1000)                  // buffer size of 1000 is arbitrary
 	messageDBChan = make(chan *model.MessageDB, 1000)                  // buffer size of 1000 is arbitrary
 	receivedmessageDBChan = make(chan *model.DeliveredMessageDB, 1000) // buffer size of 1000 is arbitrary
+	messageDropDBChan = make(chan *model.MessageDropDB, 1000)          // buffer size of 1000 is arbitrary
 	EpochLoadChan := make(chan *model.EpochLoad, 1000)                 // buffer size of 1000 is arbitrary
 	bandChan = make(chan *model.Bandwidths, 1000)                      // channel for bandwidth documnetation
 	prefetch = new(prefetcher)                                         // prefetcher fetches events associated with a node in the database
 	prefetch.init()
 	//send the relevant channels to logics
-	logics.AssignChannels(messageDBChan, receivedmessageDBChan)
+	logics.AssignChannels(messageDBChan, receivedmessageDBChan, messageDropDBChan)
 	// kick off the encounter recorder as a separate goroutine.  this goroutine
 	// will just wait for data (encounters) sent via the encounterChan, and then
 	// will record them in the DB (in the Encounters table)
 	var recorderSyncBarrierDB sync.WaitGroup
 	var recorderSyncBarrierRecievedDB sync.WaitGroup
+	var recorderSyncBarrierDropsDB sync.WaitGroup
 	var recorderSyncBarrierEpochLoadsDB sync.WaitGroup
 	var recorderSyncBarrierBandwidth sync.WaitGroup
 
@@ -549,6 +552,9 @@ func simulate(config *model.Config, investName string) {
 	//add a channel for message recording, like the encounter table
 	go logics.RecordDeliveredMessages(experimentName, receivedmessageDBChan, &recorderSyncBarrierRecievedDB)
 	recorderSyncBarrierRecievedDB.Add(1)
+	//add a channel for message drop recording, like the message table
+	go logics.RecordMessageDrops(experimentName, messageDropDBChan, &recorderSyncBarrierDropsDB)
+	recorderSyncBarrierDropsDB.Add(1)
 	//record epoch loads
 	go model.RecordEpochLoad(experimentName, EpochLoadChan, &recorderSyncBarrierEpochLoadsDB)
 	recorderSyncBarrierEpochLoadsDB.Add(1)
@@ -766,10 +772,12 @@ func simulate(config *model.Config, investName string) {
 	close(bandChan)
 	close(messageDBChan)
 	close(receivedmessageDBChan)
+	close(messageDropDBChan)
 	close(EpochLoadChan)
 	// let's wait for the channels to close
 	recorderSyncBarrierDB.Wait()
 	recorderSyncBarrierRecievedDB.Wait()
+	recorderSyncBarrierDropsDB.Wait()
 	recorderSyncBarrierEpochLoadsDB.Wait()
 	recorderSyncBarrierBandwidth.Wait()
 

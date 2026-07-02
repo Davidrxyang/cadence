@@ -455,6 +455,39 @@ func RecordDeliveredMessages(experimentName string, messageDBChan chan *model.De
 	barrier.Done()
 }
 
+// Record message drops.  This function should be started as a goroutine.  It waits
+// for incoming drop events and records them in the database, in batches for
+// efficiency.
+func RecordMessageDrops(experimentName string, messageDropDBChan chan *model.MessageDropDB, barrier *sync.WaitGroup) {
+	const batchsize = 100 // an arbitrary choice
+	drops := make([]*model.MessageDropDB, 0, batchsize)
+
+	for d := range messageDropDBChan {
+
+		// add this drop event to our list of drops
+		drops = append(drops, d)
+
+		// if we've reached our batch size, send them to the DB
+		if len(drops) >= batchsize {
+			if r := model.DB.Create(&drops); r.Error != nil {
+				logg.Warnf("failed to record message drops: %v", r.Error)
+			}
+			drops = nil // reset the buffer
+		}
+	}
+
+	// if we get here, that means that the messageDropDBChan has been closed.
+
+	// do we have any left over?
+	if len(drops) > 0 {
+		// if we have any left over in the queue, flush them to the DB
+		if r := model.DB.Create(&drops); r.Error != nil {
+			logg.Warnf("failed to record message drops: %v", r.Error)
+		}
+	}
+	barrier.Done()
+}
+
 // shard info struct for message reassmeble
 type ShardInfo struct {
 	MShards bool

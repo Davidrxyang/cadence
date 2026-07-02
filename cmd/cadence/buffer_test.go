@@ -85,7 +85,8 @@ func SetupBufferTest() {
 	// set up channels
 	messageDBChan = make(chan *model.MessageDB, 1000)                  // buffer size of 1000 is arbitrary
 	receivedmessageDBChan = make(chan *model.DeliveredMessageDB, 1000) // buffer size of 1000 is arbitrary
-	logics.AssignChannels(messageDBChan, receivedmessageDBChan)
+	messageDropDBChan = make(chan *model.MessageDropDB, 1000)          // buffer size of 1000 is arbitrary
+	logics.AssignChannels(messageDBChan, receivedmessageDBChan, messageDropDBChan)
 
 	// initialize the message counter
 	logics.InitCounter(bufferTestLogger)
