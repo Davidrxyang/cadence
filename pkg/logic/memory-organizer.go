@@ -20,7 +20,7 @@ type MemoryOrganizer interface {
 	//check if the memory buffer is overloaded
 	CheckMemory(nodeid model.NodeId, size float32) bool
 	// erase a message/messages based on differen factors
-	MakeRoom(nodeid model.NodeId, experimentName string, currentTime float64)
+	MakeRoom(nodeid model.NodeId, experimentName string, currentTime float64, incomingMessageId string)
 	// organizer type
 	OrganizerTypeReturn() OrganizerType
 }
@@ -46,7 +46,7 @@ func (or *SimpleBoundedOrganizer) CheckMemory(nodeid model.NodeId, size float32)
 
 // making room by a simple bounded techinque
 // it erases the oldest message
-func (or *SimpleBoundedOrganizer) MakeRoom(nodeid model.NodeId, experimentName string, currentTime float64) {
+func (or *SimpleBoundedOrganizer) MakeRoom(nodeid model.NodeId, experimentName string, currentTime float64, incomingMessageId string) {
 	nodemem, ok := Storage.NodesMemories.Load(nodeid)
 	if !ok { // a problem getting the node memory
 		Storage.log.Infof("can't get the node %v memory", nodeid)
@@ -83,13 +83,14 @@ func (or *SimpleBoundedOrganizer) MakeRoom(nodeid model.NodeId, experimentName s
 	//record the drop event - one row per evicted message
 	if messageDropDBChan != nil {
 		messageDropDBChan <- &model.MessageDropDB{
-			ExperimentName: experimentName,
-			MessageId:      oldestMessage.MessageId,
-			Owner:          model.NodeIdInt(oldestMessage.Sender),
-			NodeId:         model.NodeIdInt(nodeid),
-			CreationTime:   oldestMessage.CreationTime,
-			DropTime:       currentTime,
-			Size:           oldestMessage.Size,
+			ExperimentName:    experimentName,
+			MessageId:         oldestMessage.MessageId,
+			Owner:             model.NodeIdInt(oldestMessage.Sender),
+			NodeId:            model.NodeIdInt(nodeid),
+			IncomingMessageId: incomingMessageId,
+			CreationTime:      oldestMessage.CreationTime,
+			DropTime:          currentTime,
+			Size:              oldestMessage.Size,
 		}
 	}
 }
@@ -109,5 +110,5 @@ func (or *UnboundedOrganizer) CheckMemory(nodeid model.NodeId, size float32) boo
 }
 
 // in the case of unbounded buffer, there is no need for this
-func (or *UnboundedOrganizer) MakeRoom(nodeid model.NodeId, experimentName string, currentTime float64) {
+func (or *UnboundedOrganizer) MakeRoom(nodeid model.NodeId, experimentName string, currentTime float64, incomingMessageId string) {
 }

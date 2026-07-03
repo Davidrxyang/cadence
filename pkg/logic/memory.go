@@ -146,7 +146,7 @@ func UpdateSimpleBuffer(config *model.Config, nodeid model.NodeId, message *Mess
 		currentTime = message.path[len(message.path)-1].time
 	}
 	for !Storage.Organizer.CheckMemory(nodeid, size) {
-		Storage.Organizer.MakeRoom(nodeid, config.Simulation.ExperimentName, currentTime)
+		Storage.Organizer.MakeRoom(nodeid, config.Simulation.ExperimentName, currentTime, message.MessageId)
 		didDrop = true
 	}
 	nodemem_serialized.BufferUsage += size
