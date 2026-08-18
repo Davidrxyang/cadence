@@ -6,7 +6,7 @@
     "districts_amount": 100,
     "p": 0.65,
     "epsilon": 0.1,
-    "k": 6,
+    "k": 2,
     "kmeans_iterations": 50,
     "max_n": 100,
     "n_factor": 3,

@@ -78,6 +78,7 @@ func (rwl *RandomWalkLogicV1) HandleHelper(config *model.Config, encounter *mode
 			if model.TrueWithProbability(rwl.deleteProbability) {
 
 				//delete the message
+				recordMessageDrop(config, "probabilistic_removal", encounter.Time, nodeid1, message)
 				DeleteMesNode(nodeid1, message)
 
 			}

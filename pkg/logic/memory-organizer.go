@@ -87,6 +87,7 @@ func (or *SimpleBoundedOrganizer) MakeRoom(nodeid model.NodeId, experimentName s
 			MessageId:         oldestMessage.MessageId,
 			Owner:             model.NodeIdInt(oldestMessage.Sender),
 			NodeId:            model.NodeIdInt(nodeid),
+			Reason:            "buffer_overflow",
 			IncomingMessageId: incomingMessageId,
 			CreationTime:      oldestMessage.CreationTime,
 			DropTime:          currentTime,

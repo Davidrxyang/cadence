@@ -233,7 +233,10 @@ type MessageDropDB struct {
 	Owner int
 	// the node whose buffer overflowed and evicted the message
 	NodeId int
+	// why the message was dropped: "buffer_overflow" or "ttl_expired"
+	Reason string
 	// the ID of the incoming message whose arrival triggered the eviction
+	// (only set for buffer_overflow drops)
 	IncomingMessageId string
 	// the time the dropped message was originally created
 	CreationTime float64

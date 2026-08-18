@@ -11,7 +11,7 @@ message_type = 3
 
 p_values = [0.55, 0.6, 0.65]
 
-k_values = [2, 4, 6] # must be integers
+k_values = [2] # must be integers
 
 buffer_size_values  = [500]
 

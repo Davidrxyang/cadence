@@ -209,6 +209,25 @@ func AssignChannels(messageDBChan_ chan *model.MessageDB, messagedeliveredDBChan
 	messageDropDBChan = messageDropDBChan_
 }
 
+// records a message drop event to the message drop DB, for any drop reason
+// that isn't a buffer-overflow eviction (which carries its own extra fields
+// and is recorded directly in MakeRoom)
+func recordMessageDrop(config *model.Config, reason string, dropTime float64, nodeid model.NodeId, message *Message) {
+	if messageDropDBChan == nil {
+		return
+	}
+	messageDropDBChan <- &model.MessageDropDB{
+		ExperimentName: config.Simulation.ExperimentName,
+		MessageId:      message.MessageId,
+		Owner:          model.NodeIdInt(message.Sender),
+		NodeId:         model.NodeIdInt(nodeid),
+		Reason:         reason,
+		CreationTime:   message.CreationTime,
+		DropTime:       dropTime,
+		Size:           message.Size,
+	}
+}
+
 //this function places the message in the sync.map of recepient
 //and updating the db on it
 
@@ -219,7 +238,9 @@ func TransferMessage(config *model.Config, encounter *model.Encounter, messageMa
 	//and the amount of legal hops transfer
 	// was not finished
 	if message.TTLHops < 0 || encounter.Time-message.CreationTime > float64(message.TTLTime) {
-		DeleteMesNode(nodeid1, message) // TODO: check: this is back with DP addition? 
+		//record the drop event - message expired before delivery
+		recordMessageDrop(config, "ttl_expired", encounter.Time, nodeid1, message)
+		DeleteMesNode(nodeid1, message) // TODO: check: this is back with DP addition?
 		return false, false
 	}
 
